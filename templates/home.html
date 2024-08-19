@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+
+{% block content %}
+
+    <div class="row">
+
+        {% for product in product %}
+
+            <div
+                    class="col-md-3">
+                <div class="card card-product-grid">
+                    <a href="{% url 'store_app:product_detail' slug=product.slug %}" class="img-wrap"> <img src="{{ product.image.url }}"> </a>
+                    <figcaption class="info-wrap">
+                        <a href="{% url 'store_app:product_detail' slug=product.slug %}" class="title">{{ product.title }}</a>
+                        <div class="price mt-1">${{ product.price }}</div> <!-- price-wrap.// -->
+                    </figcaption>
+                </div>
+            </div>
+
+        {% endfor %}
+
+        <!-- col.// -->
+
+    </div> <!-- col.// -->
+
+
+    <!-- ========================= SECTION  END// ========================= -->
+
+{% endblock %}
+
+
+<!-- ========================= FOOTER ========================= -->
