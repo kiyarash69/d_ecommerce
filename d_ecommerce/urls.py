@@ -8,4 +8,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),  # Admin URL
     path('', views.home, name='home'),  # Root URL mapped to home view
     path('product/', include('store.urls')),  # Including store.urls for product
+    path('cart/', include('cart.urls')),  # Including cart.urls for cart
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)  # Serving media files

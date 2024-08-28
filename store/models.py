@@ -24,7 +24,6 @@ class Product(models.Model):
     def __str__(self):
         return self.name
 
-
     def get_discounted_price(self):
         # Ensure the discount is not None and is a valid percentage
         if self.discount is not None:
@@ -35,14 +34,35 @@ class Product(models.Model):
             # Calculate discounted price
             discounted_price = self.price * discount_factor
 
-            # Debug: Print values to verify calculations
-            print(f"Original Price: {self.price}")
-            print(f"Discount Percent: {discount_percent}")
-            print(f"Discount Factor: {discount_factor}")
-            print(f"Discounted Price: {discounted_price}")
-
             # Return the discounted price rounded to 2 decimal places
             return discounted_price.quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
 
         # If no discount, return the original price
         return self.price
+
+
+class VariationManager(models.Manager):
+    def colors(self):
+        return super(VariationManager, self).filter(variation_category='color', is_active=True)
+
+    def sizes(self):
+        return super(VariationManager, self).filter(variation_category='size', is_active=True)
+
+
+variation_category_choice = (
+    ('color', 'Color'),
+    ('size', 'Size'),
+)
+
+
+class Variation(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    variation_category = models.CharField(max_length=30, choices=variation_category_choice,
+                                          verbose_name="Product Variation Category")
+    variation_value = models.CharField(max_length=100)
+    is_active = models.BooleanField(default=True)
+    created = models.DateTimeField('Created at', auto_now_add=True)
+    objects = VariationManager()
+
+    def __str__(self):
+        return self.variation_value
