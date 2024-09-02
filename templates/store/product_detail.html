@@ -38,7 +38,7 @@
                                 <select class="form-control text-center" name="color">
                                     <option value="" disabled selected>Select</option>
                                     {% for item in product.variation_set.colors %}
-                                        <option value="{{ item.variation_value | lower  }}">{{ item.variation_value | capfirst  }}</option>
+                                        <option value="{{ item.variation_value | lower }}">{{ item.variation_value | capfirst }}</option>
                                     {% endfor %}
 
                                 </select>
@@ -55,22 +55,14 @@
                                 {% if product.stock <= 0 %}
                                     <p class="text-danger font-weight-bold"> Out Of Stock </p>
                                 {% else %}
-                                    {% if cart_exist %}
-                                        <p class="btn btn-success">
-                                            <span class="text">added to cart</span><i class="fas fa-check"></i>
-                                        </p>
-                                        <br>
-                                        <a href="{% url 'cart_app:product_cart' %}" class="btn btn-success">
-                                            <span class="text">View cart</span> <i class="fas fa-eye"></i>
-                                        </a>
-                                    {% else %}
-                                        <button type="submit"
-                                                class="btn btn-primary">
-                                            <span class="text">Add to cart</span> <i
-                                                class="fas fa-shopping-cart"></i>
-                                        </button>
-                                    {% endif %}
 
+
+                                    <button type="submit"
+                                            class="btn btn-primary">
+                                        <span class="text">Add to cart</span> <i
+                                            class="fas fa-shopping-cart"></i>
+                                    </button>
+                       
                                 {% endif %}
                             </form>
                         </article> <!-- product-info-aside .// -->

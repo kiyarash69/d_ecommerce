@@ -34,7 +34,6 @@
                                 <tbody>
 
                                 {% for item in items %}
-
                                     <tr>
                                         <td>
                                             <figure class="itemside align-items-center">
@@ -43,43 +42,57 @@
                                                 <figcaption class="info">
                                                     <a href="{% url 'store_app:product_detail' item.product.slug %}"
                                                        class="title text-dark">{{ item.product.name }}</a>
-                                                    <p class="text-muted small">Matrix: 25 Mpx <br>
-                                                        category: {{ item.product.category.category_name }}</p>
+                                                    {% if item.variations.exists %}
+                                                        {% for variation in item.variations.all %}
+                                                            <p class="text-muted small">{{ variation.variation_category }}: {{ variation.variation_value }}
+                                                                <br>
+                                                            </p>
+                                                        {% endfor %}
+                                                    {% endif %}
                                                 </figcaption>
                                             </figure>
                                         </td>
                                         <td>
-                                            <!-- col.// -->
                                             <div class="col">
                                                 <div class="input-group input-spinner">
                                                     <div class="input-group-prepend">
-                                                        <a href="{% url 'cart_app:product_decrease' item.product.id %}"
-                                                           class="btn btn-light" type="button" id="button-plus"> <i
-                                                                class="fa fa-minus"></i> </a>
+                                                        <a href="{% url 'cart_app:product_decrease' item.unique_id %}"
+                                                           class="btn btn-light">
+                                                            <i class="fa fa-minus"></i>
+                                                        </a>
                                                     </div>
                                                     <input type="text" class="form-control" value="{{ item.quantity }}">
                                                     <div class="input-group-append">
-                                                        <a href="{% url 'cart_app:add_to_cart' item.product.id %}"
-                                                           class="btn btn-light" type="button" id="button-minus"> <i
-                                                                class="fa fa-plus"></i> </a>
+                                                        <form action="{% url 'cart_app:add_to_cart' item.product.id %}"
+                                                              method="GET">
+                                                            {% for variation in item.variations.all %}
+                                                                <input type="hidden"
+                                                                       name="{{ variation.variation_category|lower }}"
+                                                                       value="{{ variation.variation_value|capfirst }}">
+                                                            {% endfor %}
+                                                            <button class="btn btn-light" type="submit"
+                                                                    id="button-plus">
+                                                                <i class="fa fa-plus"></i>
+                                                            </button>
+                                                        </form>
                                                     </div>
-                                                </div> <!-- input-group.// -->
-                                            </div> <!-- col.// -->
+                                                </div>
+                                            </div>
                                         </td>
                                         <td>
                                             <div class="price-wrap">
                                                 <var class="price">${{ item.sub_total }}</var>
-                                                <small class="text-muted"> ${{ item.product.get_discounted_price }}
-                                                    each </small>
-                                            </div> <!-- price-wrap .// -->
+                                                <small class="text-muted">${{ item.product.get_discounted_price }}
+                                                    each</small>
+                                            </div>
                                         </td>
                                         <td class="text-right">
-                                            <a href="{% url 'cart_app:product_remove' item.product.id %}"
-                                               class="btn btn-danger"> Remove</a>
+                                            <a href="{% url 'cart_app:product_remove' item.unique_id %}"
+                                               class="btn btn-danger">Remove</a>
                                         </td>
                                     </tr>
-
                                 {% endfor %}
+
 
                                 </tbody>
                             </table>

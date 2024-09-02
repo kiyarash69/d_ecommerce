@@ -1,3 +1,4 @@
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.db.models import Q
 from django.shortcuts import render, get_object_or_404, HttpResponse
 from django.views.generic import ListView, DetailView, View
@@ -42,7 +43,7 @@ class ProductDetailView(DetailView):
 
         # Check if the product exists in the user's cart
         try:
-            cart_item = CartItem.objects.get(product=product, cart__cart_id=_cart_id(self.request))
+            cart_item = CartItem.objects.filter(product=product, cart__cart_id=_cart_id(self.request))
             context['cart_exist'] = True
         except CartItem.DoesNotExist:
             context['cart_exist'] = False
@@ -51,26 +52,59 @@ class ProductDetailView(DetailView):
 
 
 class SearchClassBaseView(View):
+    paginate_by = 2  # Set the number of items per page globally for the class
+
     def get(self, request):
+        # Get the product list and the search query
         products = Product.objects.all().order_by('id')
-        query = request.POST.get('keyword')
+        query = request.GET.get('keyword')  # GET method should use request.GET, not request.POST
+
         if query:
+            # Filter products by query if it exists
             products = Product.objects.filter(
                 Q(title__icontains=query) | Q(description__icontains=query) | Q(name__icontains=query)
             )
-        return render(request, 'search_result.html', {'products': products})
+
+        # Paginate the product list
+        paginator = Paginator(products, self.paginate_by)  # Paginate by the number of items set
+
+        page = request.GET.get('page')  # Get the page number from the request
+
+        try:
+            products_paginated = paginator.page(page)
+        except PageNotAnInteger:
+            # If page is not an integer, show the first page
+            products_paginated = paginator.page(2)
+        except EmptyPage:
+            # If page is out of range, show the last page of results
+            products_paginated = paginator.page(paginator.num_pages)
+
+        # Render the template with the paginated products
+        return render(request, 'search_result.html', {'products': products_paginated})
 
     def post(self, request):
+        # Similar logic as the GET request
         products = Product.objects.all().order_by('id')
         query = request.POST.get('keyword')
         count = 0
+
         if query:
-            # products = Product.objects.filter(
-            #     Q(title__icontains=query) | Q(description__icontains=query) | Q(name__icontains=query)
-            # )
+            # Filter products by query if it exists
             products = Product.objects.filter(
-                Q(title__search=query) | Q(description__search=query) | Q(name__search=query)
+                Q(title__icontains=query) | Q(description__icontains=query) | Q(name__icontains=query)
             )
             count = products.count()
 
-        return render(request, 'search_result.html', {"products": products , 'count' : count})
+        # Paginate the product list
+        paginator = Paginator(products, self.paginate_by)  # Paginate by 1 item per page
+        page = request.GET.get('page')  # Get the page number from the request
+
+        try:
+            products_paginated = paginator.page(page)
+        except PageNotAnInteger:
+            products_paginated = paginator.page(1)
+        except EmptyPage:
+            products_paginated = paginator.page(paginator.num_pages)
+
+        # Render the template with the paginated products
+        return render(request, 'search_result.html', {'products': products_paginated, 'count': count})
