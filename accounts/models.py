@@ -47,7 +47,7 @@ class Account(AbstractBaseUser):
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username' , 'first_name' , 'last_name']
 
-    object = MyAccountManager()
+    objects = MyAccountManager()
 
     # required
     date_joined = models.DateTimeField(auto_now_add=True)

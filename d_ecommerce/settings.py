@@ -65,7 +65,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'category.context_processors.context_processors.custom_context',
-                'cart.context_processors.conter' , 
+                'cart.context_processors.conter' ,
             ],
         },
     },
@@ -128,3 +128,11 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 AUTH_USER_MODEL = 'accounts.Account'
+
+
+from django.contrib.messages import constants as messages
+
+MESSAGE_TAGS = {
+    messages.INFO: "",
+    50: "critical",
+}
