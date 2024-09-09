@@ -4,7 +4,7 @@ from .models import Account
 
 @admin.register(Account)
 class AccountAdmin(admin.ModelAdmin):
-    list_display = ('email', 'username', 'date_joined', 'last_login', 'is_admin')
+    list_display = ('email', 'username', 'date_joined', 'last_login', 'is_active' , 'is_admin')
     list_display_links = (
         'username',
         'email'

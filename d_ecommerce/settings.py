@@ -9,8 +9,9 @@ https://docs.djangoproject.com/en/3.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
-
+import os
 from pathlib import Path
+from django.contrib.messages import constants as messages
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
@@ -65,7 +66,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'category.context_processors.context_processors.custom_context',
-                'cart.context_processors.conter' ,
+                'cart.context_processors.conter',
             ],
         },
     },
@@ -129,10 +130,15 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 AUTH_USER_MODEL = 'accounts.Account'
 
-
-from django.contrib.messages import constants as messages
-
 MESSAGE_TAGS = {
-    messages.INFO: "",
-    50: "critical",
+    messages.ERROR: 'danger',
 }
+
+# SMTP configuration
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'kiarashforozanfard@gmail.com'
+EMAIL_HOST_PASSWORD = 'yxey yvic ytse raue'
+EMAIL_USE_TLS = True

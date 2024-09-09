@@ -12,7 +12,6 @@
 
                 <form action="{% url 'account_app:register' %}" method="post">
                     {% csrf_token %}
-
                     <div class="form-row">
                         <div class="col form-group">
                             <label>First name</label>
@@ -92,7 +91,7 @@
 
             </article><!-- card-body.// -->
         </div> <!-- card .// -->
-        <p class="text-center mt-4">Have an account? <a href="">Log In</a></p>
+        <p class="text-center mt-4">Have an account? <a href="{% url "account_app:login" %}">Log In</a></p>
         <br><br>
         <!-- ============================ COMPONENT REGISTER  END.// ================================= -->
 
