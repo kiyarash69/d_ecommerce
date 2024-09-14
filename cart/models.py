@@ -1,4 +1,5 @@
 from django.db import models
+from accounts.models import Account
 from store.models import Product, Variation
 import uuid
 
@@ -17,9 +18,10 @@ class Cart(models.Model):
 
 
 class CartItem(models.Model):
+    user = models.ForeignKey(Account, on_delete=models.CASCADE, null=True)
     unique_id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='cartitem')
-    cart = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name='cartitem')
+    cart = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name='cartitem', null=True)
     variations = models.ManyToManyField(Variation, blank=True)
     quantity = models.PositiveIntegerField()
     is_active = models.BooleanField(default=True)
@@ -29,5 +31,3 @@ class CartItem(models.Model):
 
     def __str__(self):
         return self.product.name
-
-
