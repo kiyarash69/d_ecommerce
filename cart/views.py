@@ -1,6 +1,8 @@
 from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import View
+
+from orders.models import Order
 from store.models import Product, Variation
 from .models import Cart, CartItem
 from django.core.exceptions import ObjectDoesNotExist
@@ -214,6 +216,7 @@ class CheckoutView(LoginRequiredMixin, View):
             "tax": tax,
             "grand_total": grand_total
         }
+
         return render(request, 'store/checkout.html', context)
 
 # end region

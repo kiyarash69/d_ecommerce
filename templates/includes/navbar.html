@@ -78,7 +78,7 @@
                             </div>
                         {% else %}
                             <div class="widget-header">
-                                <small class="title text-muted">Welcome {{ user.first_name }}</small>
+                                <small class="title text-muted">Welcome {{ user.email }}</small>
                                 <div>
                                     <a href="{% url 'account_app:dashboard' %}">Dashboard</a> <span
                                         class="dark-transp"> | </span>

@@ -6,7 +6,11 @@ from category.models import Category
 from .models import Product
 from cart.models import CartItem
 from cart.views import _cart_id
+from rest_framework import viewsets
+from .serializers import ProductSerializer
 
+
+# region show products
 
 class ProductsPageView(ListView):
     model = Product
@@ -50,6 +54,11 @@ class ProductDetailView(DetailView):
 
         return context
 
+
+# endregion
+
+
+# region search
 
 class SearchClassBaseView(View):
     paginate_by = 2  # Set the number of items per page globally for the class
@@ -108,3 +117,16 @@ class SearchClassBaseView(View):
 
         # Render the template with the paginated products
         return render(request, 'search_result.html', {'products': products_paginated, 'count': count})
+
+
+# endregion
+
+
+# region Api
+
+class ProductvViewsets(viewsets.ModelViewSet):
+    queryset = Product.objects.all()
+    paginate_by = 2
+    serializer_class = ProductSerializer
+
+# endregion

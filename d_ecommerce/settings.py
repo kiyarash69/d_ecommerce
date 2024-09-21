@@ -40,6 +40,12 @@ INSTALLED_APPS = [
     'accounts.apps.AccountsConfig',
     'store.apps.StoreConfig',
     'cart.apps.CartConfig',
+    'orders.apps.OrdersConfig',
+
+    # frameworks
+    'rest_framework',
+    'django_cleanup.apps.CleanupConfig',
+
 ]
 
 MIDDLEWARE = [
@@ -142,3 +148,5 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = 'kiarashforozanfard@gmail.com'
 EMAIL_HOST_PASSWORD = 'yxey yvic ytse raue'
 EMAIL_USE_TLS = True
+
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
