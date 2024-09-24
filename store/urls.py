@@ -12,4 +12,5 @@ urlpatterns = [
     path('category/<slug:slug>/', views.ProductsPageView.as_view(), name='products_by_category'),
     path('detail/<slug:slug>', views.ProductDetailView.as_view(), name='product_detail'),
     path('viewset/products', include(router.urls), name='view_set'),
+    path('review/submit/<int:product_id>/', views.ReviewSumitView.as_view(), name='review_submit')
 ]

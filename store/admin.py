@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from category.models import Category
-from .models import Product, Variation
+from .models import Product, Variation, ReviewRating
 
 
 @admin.register(Product)
@@ -17,3 +17,7 @@ class VariationAdmin(admin.ModelAdmin):
     list_filter = ('product', 'variation_category', 'is_active',)
     list_editable = ('is_active',)
 
+
+@admin.register(ReviewRating)
+class RewAdmin(admin.ModelAdmin):
+    list_display = ['user', 'product', 'review', 'status', 'ip', 'created_at']
