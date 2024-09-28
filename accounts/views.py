@@ -3,18 +3,20 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import EmailMessage
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.views.generic import View
-
+from orders.models import Order
 from cart.models import Cart, CartItem
 from cart.views import _cart_id
 from . import forms
 from . import models
 from django.contrib import messages
-from .models import Account
+
+from .forms import UserForm, ProfileForm
+from .models import Account, Profile
 from django.urls import reverse
 from django.contrib.auth.mixins import LoginRequiredMixin
 import requests
@@ -180,7 +182,14 @@ class DashboardClassBaseView(LoginRequiredMixin, View):
     login_url = 'account_app:login'
 
     def get(self, request):
-        return render(request, 'account/dashboard.html', {})
+        orders = Order.objects.order_by('-created_at').filter(user_id=request.user.id, is_ordered=True)
+        orders_count = orders.count()
+
+        contex = {
+            'orders': orders,
+            'orders_count': orders_count
+        }
+        return render(request, 'account/dashboard.html', contex)
 
 
 class ForgotPasswordClassBaseView(View):
@@ -262,5 +271,72 @@ class ResetPassword(View):
         else:
             messages.error(request, 'Passwords do not match!')
             return redirect('account_app:reset_password')
+
+
+class MyOrdersView(View):
+    def get(self, request):
+        orders = Order.objects.filter(user=request.user, is_ordered=True).order_by('-created_at')
+        context = {
+            'orders': orders,
+        }
+        return render(request, 'order/my_orders.html', context)
+
+
+class EditProfileView(View):
+    def get(self, request):
+        userprofile = get_object_or_404(Profile, user=request.user)
+        user_form = UserForm(instance=request.user)
+        profile_form = ProfileForm(instance=userprofile)
+
+        context = {
+            'user_form': user_form,
+            'profile_form': profile_form,
+            'userprofile': userprofile,
+        }
+        return render(request, 'account/edit_profile.html', context)
+
+    def post(self, request):
+        userprofile = get_object_or_404(Profile, user=request.user)
+        user_form = UserForm(request.POST, instance=request.user)
+        profile_form = ProfileForm(request.POST, request.FILES, instance=userprofile)
+
+        if user_form.is_valid() and profile_form.is_valid():
+            user_form.save()
+            profile_form.save()
+            messages.success(request, 'Your profile has been updated successfully.')
+            return redirect('account_app:edit_profile')
+
+        context = {
+            'user_form': user_form,
+            'profile_form': profile_form,
+            'userprofile': userprofile,
+        }
+        return render(request, 'account/edit_profile.html', context)
+
+
+class ChangePasswordView(View):
+    def get(self, request):
+        return render(request, 'account/change_password.html')
+
+    def post(self, request):
+        current_password = request.POST.get('current_password')
+        new_password = request.POST.get('new_password')
+        confirm_password = request.POST.get('confirm_password')
+
+        user = Account.objects.get(pk=request.user.id)
+
+        if new_password == confirm_password:
+            success = user.check_password(current_password)
+            if success:
+                user.set_password(new_password)
+                user.save()
+                messages.success(request, 'Your Password has been updated successfully.')
+                return redirect('account_app:login')
+            else:
+                messages.error(request, 'Please enter correct current password!')
+                return redirect('account_app:change_password')
+        else:
+            messages.error(request, 'Passwords do not match!')
+            return redirect('account_app:change_password')
 
 # endregion

@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+    {% include 'includes/alert_message.html' %}
+
+    <!-- ========================= SECTION CONTENT ========================= -->
+    <section class="section-conten padding-y bg">
+        <div class="container">
+            <div class="row">
+                {% include 'includes/dashboard_sidebar.html' %}
+                <main class="col-md-9">
+                    <article class="card">
+                        <header class="card-header">
+                            <strong class="d-inline-block mr-3">User name: </strong>
+                            <span>{{ request.user.fullname }}</span>
+                        </header>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <form method="post"
+                                          action={% url 'account_app:edit_profile' %} enctype="multipart/form-data">
+                                        {% csrf_token %}
+                                        <div class="row">
+                                            <div class="form-group col-md-6">
+                                                {{ user_form.first_name }}
+                                            </div>
+                                            <div class="form-group col-md-6">
+                                                {{ user_form.last_name }}
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="form-group col-md-6">
+                                                {{ user_form.phone_number }}
+                                            </div>
+                                            <div class="form-group col-md-6">
+                                                {{ profile_form.picture }}
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="form-group col-md-12">
+                                                {{ profile_form.address_line_1 }}
+                                            </div>
+                                            <div class="form-group col-md-12">
+                                                {{ profile_form.address_line_2 }}
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="form-group col-md-4">
+                                                {{ profile_form.country }}
+                                            </div>
+                                            <div class="form-group col-md-4">
+                                                {{ profile_form.state }}
+                                            </div>
+                                            <div class="form-group col-md-4">
+                                                {{ profile_form.city }}
+                                            </div>
+                                        </div>
+
+                                        <button class="btn btn-primary" type="submit">
+                                            Save
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
+                </main>
+            </div>
+        </div>
+    </section>
+{% endblock %}
