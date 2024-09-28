@@ -1,7 +1,14 @@
 from django.contrib import admin
 
 from category.models import Category
-from .models import Product, Variation, ReviewRating
+from .models import Product, Variation, ReviewRating, ProductGallery
+import admin_thumbnails
+
+
+@admin_thumbnails.thumbnail('image')
+class ProductGalleryAdmin(admin.TabularInline):
+    model = ProductGallery
+    extra = 1
 
 
 @admin.register(Product)
@@ -9,6 +16,7 @@ class ProductAdmin(admin.ModelAdmin):
     prepopulated_fields = {'slug': ('name',)}
     list_display = ['name', 'stock', 'available', 'created']
     readonly_fields = ['created', 'modified']
+    inlines = [ProductGalleryAdmin]
 
 
 @admin.register(Variation)

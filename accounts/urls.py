@@ -16,5 +16,5 @@ urlpatterns = [
     path('my_orders/', views.MyOrdersView.as_view(), name='my_orders'),
     path('edit/profile', views.EditProfileView.as_view(), name='edit_profile'),
     path('change/password', views.ChangePasswordView.as_view(), name='change_password'),
-
+    path('my/orders/detail/<int:order_number>/', views.MyOrdersDetail.as_view(), name='my_orders_detail'),
 ]

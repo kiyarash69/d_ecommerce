@@ -41,8 +41,16 @@
                                 <div class="col-md-6">
                                     <div class="card">
                                         <div class="card-body" style="text-align: center;">
-                                            <img src="https://www.w3schools.com/howto/img_avatar.png" alt="user picture"
-                                                 class="avatar" width="50" height="50" style="border-radius:50px">
+                                            {% if request.user.profile.picture %}
+                                                <img src="{{ request.user.profile.picture.url }}"
+                                                     alt="user picture"
+                                                     class="avatar" width="50" height="50" style="border-radius:50px">
+                                            {% else %}
+                                                <img src="https://www.w3schools.com/howto/img_avatar.png"
+                                                     alt="user picture"
+                                                     class="avatar" width="50" height="50" style="border-radius:50px">
+                                            {% endif %}
+
 
                                             <p class="mb-0">
                                                 {{ request.user.email }}

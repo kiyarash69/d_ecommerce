@@ -6,7 +6,7 @@ from django.views.generic import ListView, DetailView, View
 from category.models import Category
 from orders.models import OrderProduct
 from .forms import ReviewForm
-from .models import Product, ReviewRating
+from .models import Product, ReviewRating, ProductGallery
 from cart.models import CartItem
 from cart.views import _cart_id
 from rest_framework import viewsets
@@ -57,6 +57,8 @@ class ProductDetailView(DetailView):
             order_product = None
 
         context['reviews'] = ReviewRating.objects.filter(product_id=product.id, status=True)
+
+        context['product_gallery'] = ProductGallery.objects.filter(product_id=product.id)
 
         context['order_product'] = order_product
         return context

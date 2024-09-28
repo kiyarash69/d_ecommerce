@@ -13,7 +13,12 @@
                     <article class="card">
                         <header class="card-header">
                             <strong class="d-inline-block mr-3">User name: </strong>
-                            <span>{{ request.user.fullname }}</span>
+                            <span>{{ request.user.first_name }}</span>
+                            <br>
+                            <div class="text-right">
+                                <img src="{{ request.user.profile.picture.url }}" width="80px"
+                                     style="border-radius:100px " alt="">
+                            </div>
                         </header>
                         <div class="card-body">
                             <div class="row">

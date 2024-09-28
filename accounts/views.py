@@ -8,7 +8,7 @@ from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.views.generic import View
-from orders.models import Order
+from orders.models import Order, OrderProduct
 from cart.models import Cart, CartItem
 from cart.views import _cart_id
 from . import forms
@@ -193,6 +193,7 @@ class DashboardClassBaseView(LoginRequiredMixin, View):
 
 
 class ForgotPasswordClassBaseView(View):
+
     def get(self, request):
         # Pass an empty dictionary as context (best practice)
         return render(request, 'account/forgot_password.html', {})
@@ -228,6 +229,7 @@ class ForgotPasswordClassBaseView(View):
 
 
 class ResetPasswordValidate(View):
+
     def get(self, request, uidb64, token):
         try:
             uid = urlsafe_base64_decode(uidb64).decode()
@@ -273,16 +275,20 @@ class ResetPassword(View):
             return redirect('account_app:reset_password')
 
 
-class MyOrdersView(View):
+class MyOrdersView(LoginRequiredMixin, View):
+    login_url = 'account_app:login'
+
     def get(self, request):
         orders = Order.objects.filter(user=request.user, is_ordered=True).order_by('-created_at')
         context = {
             'orders': orders,
         }
-        return render(request, 'order/my_orders.html', context)
+        return render(request, 'account/my_orders.html', context)
 
 
-class EditProfileView(View):
+class EditProfileView(LoginRequiredMixin, View):
+    login_url = 'account_app:login'
+
     def get(self, request):
         userprofile = get_object_or_404(Profile, user=request.user)
         user_form = UserForm(instance=request.user)
@@ -314,7 +320,9 @@ class EditProfileView(View):
         return render(request, 'account/edit_profile.html', context)
 
 
-class ChangePasswordView(View):
+class ChangePasswordView(LoginRequiredMixin, View):
+    login_url = 'account_app:login'
+
     def get(self, request):
         return render(request, 'account/change_password.html')
 
@@ -338,5 +346,24 @@ class ChangePasswordView(View):
         else:
             messages.error(request, 'Passwords do not match!')
             return redirect('account_app:change_password')
+
+
+class MyOrdersDetail(LoginRequiredMixin, View):
+    login_url = 'account_app:login'
+
+    def get(self, request, order_number):
+        order_detail = OrderProduct.objects.filter(order__order_number=order_number)
+        order = Order.objects.get(order_number=order_number)
+
+        subtotal = 0
+
+        for product in order_detail:
+            subtotal += product.product_price * product.quantity
+        context = {
+            'order_detail': order_detail,
+            'order': order,
+            'subtotal': subtotal,
+        }
+        return render(request, 'account/my_orders_detail.html', context)
 
 # endregion
